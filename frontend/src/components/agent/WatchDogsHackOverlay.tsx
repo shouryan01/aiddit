@@ -26,6 +26,7 @@ export function WatchDogsHackOverlay() {
     const start = performance.now()
     const duration = 1350
 
+    let completionTimer: ReturnType<typeof setTimeout> | undefined
     const interval = setInterval(() => {
       const elapsed = performance.now() - start
       const pct = Math.min(100, Math.floor((elapsed / duration) * 100))
@@ -34,13 +35,16 @@ export function WatchDogsHackOverlay() {
 
       if (pct >= 100) {
         clearInterval(interval)
-        setTimeout(() => {
+        completionTimer = setTimeout(() => {
           completeWatchDogsHijack()
         }, 220)
       }
     }, 30)
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      clearTimeout(completionTimer)
+    }
   }, [hijackState, completeWatchDogsHijack])
 
   if (!hijackState) return null

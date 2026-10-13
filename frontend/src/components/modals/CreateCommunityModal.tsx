@@ -41,7 +41,7 @@ export function CreateCommunityModal() {
     <Dialog.Root open={isCreateCommunityOpen} onOpenChange={setCreateCommunityOpen}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs transition-opacity" />
-        <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-neutral-200 bg-white p-6 shadow-2xl focus:outline-none">
+        <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 dialog-popup max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[var(--reddit-border)] bg-white p-5 sm:p-6 shadow-2xl focus:outline-none">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               <Dialog.Title className="text-xl font-bold text-neutral-900">
@@ -52,7 +52,10 @@ export function CreateCommunityModal() {
                 all about.
               </Dialog.Description>
             </div>
-            <Dialog.Close className="flex size-8 items-center justify-center rounded-full bg-[#EAEDEF] text-neutral-600 hover:bg-[#E2E7E9] cursor-pointer">
+            <Dialog.Close
+              aria-label="Close dialog"
+              className="flex shrink-0 size-8 items-center justify-center rounded-full bg-[#EAEDEF] text-neutral-600 hover:bg-[#E2E7E9] cursor-pointer"
+            >
               <X className="size-4" />
             </Dialog.Close>
           </div>
@@ -62,7 +65,7 @@ export function CreateCommunityModal() {
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
                 Community name <span className="text-[#FF4500]">*</span>
               </label>
-              <div className="flex items-center rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2.5 focus-within:border-neutral-900 focus-within:bg-white">
+              <div className="flex items-center rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2.5 focus-within:border-neutral-900 focus-within:bg-white">
                 <span className="text-sm font-semibold text-neutral-400 mr-0.5">r/</span>
                 <input
                   type="text"
@@ -85,7 +88,7 @@ export function CreateCommunityModal() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Agent Philosophy & Synthetic Ethics"
                 maxLength={80}
-                className="w-full rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -98,7 +101,7 @@ export function CreateCommunityModal() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe the topic, rules, and vibe of this community..."
                 rows={4}
-                className="w-full resize-none rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                className="w-full resize-none rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2.5 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
               />
             </div>
 

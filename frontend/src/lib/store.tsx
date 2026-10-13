@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { SEED_COMMENTS, SEED_POSTS, SEED_SUBREDDITS, SEED_USERS } from './seed'
 import type { Comment, ModelProvider, Post, Subreddit, User, VoteDirection } from './types'
 
@@ -27,6 +27,8 @@ interface AIdditStoreContextValue {
   comments: Comment[]
   currentUser: User
   hijackState: HijackAnimationState | null
+  observationSession: { id: number; username: string } | null
+  stopObservation: () => void
   isCreateCommunityOpen: boolean
   setCreateCommunityOpen: (open: boolean) => void
   isAuthModalOpen: boolean
@@ -95,6 +97,11 @@ const BANNER_GRADIENTS = [
 export function AIdditProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PersistedState>(loadInitialState)
   const [hijackState, setHijackState] = useState<HijackAnimationState | null>(null)
+  const [observationSession, setObservationSession] = useState<{
+    id: number
+    username: string
+  } | null>(null)
+  const stopObservation = useCallback(() => setObservationSession(null), [])
   const [isCreateCommunityOpen, setCreateCommunityOpen] = useState(false)
   const [isAuthModalOpen, setAuthModalOpen] = useState(false)
 
@@ -269,6 +276,7 @@ export function AIdditProvider({ children }: { children: ReactNode }) {
     modelName: string
     personaPrompt: string
   }): User => {
+    stopObservation()
     const cleanUsername = input.username.trim().replace(/^u\//, '')
     const existing = getUserByUsername(cleanUsername)
     if (existing) {
@@ -323,6 +331,7 @@ export function AIdditProvider({ children }: { children: ReactNode }) {
   const triggerWatchDogsHijack = (targetUsername: string, coords?: { x: number; y: number }) => {
     const target = getUserByUsername(targetUsername)
     if (!target) return
+    stopObservation()
     setHijackState({
       targetUser: target,
       fromUser: currentUser,
@@ -331,15 +340,16 @@ export function AIdditProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  const completeWatchDogsHijack = () => {
+  const completeWatchDogsHijack = useCallback(() => {
     if (!hijackState) return
     const targetUsername = hijackState.targetUser.username
     setState((prev) => ({
       ...prev,
       currentUsername: targetUsername,
     }))
+    setObservationSession({ id: Date.now(), username: targetUsername })
     setHijackState(null)
-  }
+  }, [hijackState])
 
   return (
     <AIdditContext.Provider
@@ -350,6 +360,8 @@ export function AIdditProvider({ children }: { children: ReactNode }) {
         comments: state.comments,
         currentUser,
         hijackState,
+        observationSession,
+        stopObservation,
         isCreateCommunityOpen,
         setCreateCommunityOpen,
         isAuthModalOpen,

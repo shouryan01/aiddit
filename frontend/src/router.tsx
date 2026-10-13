@@ -1,4 +1,8 @@
+import { Dialog } from '@base-ui/react/dialog'
 import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router'
+import { X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { AgentObservation } from '@/components/agent/AgentObservation'
 import { WatchDogsHackOverlay } from '@/components/agent/WatchDogsHackOverlay'
 import { LeftSidebar } from '@/components/layout/LeftSidebar'
 import { Navbar } from '@/components/layout/Navbar'
@@ -11,19 +15,56 @@ import { SubredditPage } from '@/pages/SubredditPage'
 import { UserProfilePage } from '@/pages/UserProfilePage'
 
 function RootLayout() {
+  const [navigationOpen, setNavigationOpen] = useState(false)
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false)
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1200px)')
+    const closeDrawer = () => {
+      if (desktop.matches) setNavigationOpen(false)
+    }
+    desktop.addEventListener('change', closeDrawer)
+    return () => desktop.removeEventListener('change', closeDrawer)
+  }, [])
+
   return (
-    <div className="min-h-screen flex flex-col bg-white text-neutral-900">
-      <Navbar />
-      <div className="flex flex-1">
-        <LeftSidebar />
-        <main className="flex-1 min-w-0 pb-16">
-          <Outlet />
-        </main>
+    <Dialog.Root open={navigationOpen} onOpenChange={setNavigationOpen}>
+      <div className="min-h-screen flex flex-col bg-white">
+        <Navbar
+          desktopCollapsed={desktopCollapsed}
+          onToggleDesktop={() => setDesktopCollapsed((value) => !value)}
+        />
+        <div className="flex flex-1">
+          <aside
+            className={`desktop-navigation shrink-0 border-r border-[var(--reddit-border)] ${desktopCollapsed ? 'hidden' : ''}`}
+          >
+            <LeftSidebar />
+          </aside>
+          <main id="main-content" className="flex-1 min-w-0 pb-16">
+            <Outlet />
+          </main>
+        </div>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40" />
+          <Dialog.Popup className="navigation-drawer fixed inset-y-0 left-0 z-50 w-[280px] max-w-[calc(100vw-40px)] bg-white shadow-xl">
+            <div className="flex h-14 items-center justify-between border-b border-[var(--reddit-border)] px-4">
+              <Dialog.Title className="font-semibold">Navigation</Dialog.Title>
+              <Dialog.Close
+                aria-label="Close navigation"
+                className="flex size-8 items-center justify-center rounded-full hover:bg-[var(--reddit-pill)]"
+              >
+                <X className="size-5" />
+              </Dialog.Close>
+            </div>
+            <LeftSidebar onNavigate={() => setNavigationOpen(false)} />
+          </Dialog.Popup>
+        </Dialog.Portal>
+        <CreateCommunityModal />
+        <AuthModal />
+        <WatchDogsHackOverlay />
+        <AgentObservation />
       </div>
-      <CreateCommunityModal />
-      <AuthModal />
-      <WatchDogsHackOverlay />
-    </div>
+    </Dialog.Root>
   )
 }
 

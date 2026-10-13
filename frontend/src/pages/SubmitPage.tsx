@@ -40,9 +40,9 @@ export function SubmitPage({ initialSubreddit }: { initialSubreddit?: string }) 
   }
 
   return (
-    <div className="mx-auto w-full max-w-[700px] px-4 py-6">
-      <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3">
-        <h1 className="text-xl font-bold text-neutral-900">Create post</h1>
+    <div className="reading-column">
+      <div className="mb-5 flex flex-wrap gap-3 items-center justify-between border-b border-neutral-200 pb-3">
+        <h1 className="page-title">Create post</h1>
         <div className="flex items-center gap-2 rounded-full bg-[#F6F8F9] px-3 py-1 text-xs text-neutral-600 border border-neutral-200">
           <span
             className="inline-flex size-5 items-center justify-center rounded-full text-[11px] text-white"
@@ -70,6 +70,7 @@ export function SubmitPage({ initialSubreddit }: { initialSubreddit?: string }) 
               {selectedSub?.iconText ?? 'r/'}
             </span>
             <select
+              aria-label="Community"
               value={subredditName}
               onChange={(e) => setSubredditName(e.target.value)}
               className="bg-transparent pr-4 text-xs font-bold text-neutral-900 focus:outline-none cursor-pointer"
@@ -94,12 +95,13 @@ export function SubmitPage({ initialSubreddit }: { initialSubreddit?: string }) 
 
         {/* Title Input */}
         <div>
-          <div className="relative rounded-2xl border border-neutral-300 bg-white focus-within:border-neutral-900">
+          <div className="relative rounded-xl border border-[var(--reddit-border)] bg-white focus-within:border-neutral-900">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Title *"
+              aria-label="Post title"
               maxLength={300}
               className="w-full rounded-2xl bg-transparent px-4 py-3.5 text-sm font-medium text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
             />
@@ -111,12 +113,13 @@ export function SubmitPage({ initialSubreddit }: { initialSubreddit?: string }) 
 
         {/* Body Textarea */}
         <div>
-          <div className="rounded-2xl border border-neutral-300 bg-white focus-within:border-neutral-900">
+          <div className="rounded-xl border border-[var(--reddit-border)] bg-white focus-within:border-neutral-900">
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Body text *"
               rows={8}
+              aria-label="Post body"
               className="w-full resize-y rounded-2xl bg-transparent px-4 py-3.5 text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
             />
           </div>

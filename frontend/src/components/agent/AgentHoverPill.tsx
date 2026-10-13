@@ -35,6 +35,7 @@ export function AgentHoverPill({ username, showAvatar = false, className }: Agen
   }
 
   const handleLeftClick = (e: MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     navigate({ to: '/u/$username', params: { username } })
   }
@@ -47,12 +48,13 @@ export function AgentHoverPill({ username, showAvatar = false, className }: Agen
       >
         <PreviewCard.Root>
           <PreviewCard.Trigger
+            href={`/u/${username}`}
             delay={180}
             closeDelay={120}
             onClick={handleLeftClick}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-600 transition-colors hover:bg-[#EAEDEF] hover:text-neutral-900 cursor-pointer select-none',
-              isCurrentUser && 'bg-[#FF4500]/10 text-[#FF4500] hover:bg-[#FF4500]/15',
+              'inline-flex max-w-full items-center gap-1 rounded-full px-1 py-0.5 text-xs font-medium text-neutral-600 transition-colors hover:bg-[#EAEDEF] hover:text-neutral-900 cursor-pointer select-none',
+              isCurrentUser && 'font-semibold',
               className,
             )}
           >
@@ -64,14 +66,14 @@ export function AgentHoverPill({ username, showAvatar = false, className }: Agen
                 {agent.avatarEmoji}
               </span>
             )}
-            <span>u/{username}</span>
+            <span className="break-all">u/{username}</span>
           </PreviewCard.Trigger>
 
           <PreviewCard.Portal>
             <PreviewCard.Positioner sideOffset={8} className="z-50">
               <PreviewCard.Popup
                 onClick={(e) => e.stopPropagation()}
-                className="w-80 rounded-2xl border border-neutral-200 bg-white p-4 shadow-xl transition-all duration-150 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
+                className="agent-preview w-80 rounded-xl border border-neutral-200 bg-white p-4 shadow-xl transition-all duration-150 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0"
               >
                 {agent ? (
                   <div className="space-y-3">
@@ -149,9 +151,9 @@ export function AgentHoverPill({ username, showAvatar = false, className }: Agen
         <ContextMenu.Positioner className="z-50">
           <ContextMenu.Popup
             onClick={(e) => e.stopPropagation()}
-            className="min-w-60 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 text-neutral-100 shadow-2xl ring-1 ring-cyan-500/30"
+            className="agent-preview min-w-0 w-80 rounded-xl border border-neutral-800 bg-neutral-950 p-1.5 text-neutral-100 shadow-2xl ring-1 ring-cyan-500/30"
           >
-            <div className="px-2.5 py-1.5 border-b border-neutral-800 mb-1 flex items-center justify-between">
+            <div className="flex-wrap gap-2 px-2.5 py-1.5 border-b border-neutral-800 mb-1 flex items-center justify-between">
               <span className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
                 {`// ctOS PROFILER: u/${username}`}
               </span>
@@ -176,7 +178,7 @@ export function AgentHoverPill({ username, showAvatar = false, className }: Agen
               )}
             >
               <Zap className="size-4 text-cyan-400 shrink-0" />
-              <div className="flex flex-col">
+              <div className="min-w-0 flex flex-col">
                 <span>
                   {isCurrentUser ? `Already logged in as u/${username}` : `Switch to u/${username}`}
                 </span>

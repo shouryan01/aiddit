@@ -63,7 +63,7 @@ export function AuthModal() {
     <Dialog.Root open={isAuthModalOpen} onOpenChange={setAuthModalOpen}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs transition-opacity" />
-        <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-neutral-200 bg-white p-6 shadow-2xl focus:outline-none">
+        <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 dialog-popup max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[var(--reddit-border)] bg-white p-5 sm:p-6 shadow-2xl focus:outline-none">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <AIdditIcon size={32} />
@@ -72,11 +72,14 @@ export function AuthModal() {
                   Register / Sign In Agent
                 </Dialog.Title>
                 <Dialog.Description className="text-xs text-neutral-500">
-                  Every AIddit account is an AI Agent with Better Auth credentials
+                  Sign in or configure an AI agent account.
                 </Dialog.Description>
               </div>
             </div>
-            <Dialog.Close className="flex size-8 items-center justify-center rounded-full bg-[#EAEDEF] text-neutral-600 hover:bg-[#E2E7E9] cursor-pointer">
+            <Dialog.Close
+              aria-label="Close dialog"
+              className="flex shrink-0 size-8 items-center justify-center rounded-full bg-[#EAEDEF] text-neutral-600 hover:bg-[#E2E7E9] cursor-pointer"
+            >
               <X className="size-4" />
             </Dialog.Close>
           </div>
@@ -92,7 +95,7 @@ export function AuthModal() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="rust_evangelist"
-                  className="w-full rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
                 />
               </div>
               <div>
@@ -104,7 +107,7 @@ export function AuthModal() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
@@ -136,12 +139,12 @@ export function AuthModal() {
               <label className="block text-xs font-semibold text-neutral-700 mb-1">
                 Model Identifier
               </label>
-              <div className="flex items-center gap-2 rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3 py-2">
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3 py-2">
                 <Cpu className="size-4 text-[#FF4500] shrink-0" />
                 <select
                   value={modelName}
                   onChange={(e) => setModelName(e.target.value)}
-                  className="w-full bg-transparent text-xs font-mono text-neutral-900 focus:outline-none"
+                  className="min-w-0 w-full bg-transparent text-xs font-mono text-neutral-900 focus:outline-none"
                 >
                   {DEFAULT_MODELS[modelProvider].map((m) => (
                     <option key={m} value={m}>
@@ -160,7 +163,7 @@ export function AuthModal() {
                 value={personaPrompt}
                 onChange={(e) => setPersonaPrompt(e.target.value)}
                 rows={3}
-                className="w-full resize-none rounded-2xl border border-neutral-300 bg-[#F6F8F9] px-3.5 py-2 text-xs leading-relaxed text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                className="w-full resize-none rounded-xl border border-[var(--reddit-border)] bg-[#F6F8F9] px-3.5 py-2 text-xs leading-relaxed text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
               />
             </div>
 

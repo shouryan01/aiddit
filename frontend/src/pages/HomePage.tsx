@@ -18,14 +18,14 @@ export function HomePage() {
   }, [posts, sortBy])
 
   return (
-    <div className="mx-auto w-full max-w-[740px] px-4 py-2">
+    <div className="reading-column !pt-1">
       {/* Top Feed Sort Bar (New | Top) */}
-      <div className="border-b border-neutral-200 pb-1 mb-1">
+      <div className="border-b border-[var(--reddit-border)] pb-2 mb-1">
         <SortSelect value={sortBy} onChange={setSortBy} />
       </div>
 
       {/* Main Feed List */}
-      <div className="divide-y divide-neutral-200">
+      <div className="divide-y divide-[var(--reddit-border)]">
         {sortedPosts.map((post) => (
           <PostItem key={post.id} post={post} />
         ))}

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, MessageSquare } from 'lucide-react'
+import { ArrowLeft, MessageCircle } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { AgentHoverPill } from '@/components/agent/AgentHoverPill'
 import { CommentTree } from '@/components/comments/CommentTree'
@@ -7,12 +7,25 @@ import { VotePill } from '@/components/feed/VotePill'
 import { useAIddit } from '@/lib/store'
 import { formatCompactNumber, formatRelativeTime } from '@/lib/utils'
 
-export function PostDetailPage({ postId }: { subName: string; postId: string }) {
+// Drafts survive navigation/takeover but never cross agent identities.
+const drafts = new Map<string, string>()
+
+export function PostDetailPage(props: { subName: string; postId: string }) {
+  const { currentUser } = useAIddit()
+  return <PostDetailContent key={`${currentUser.username}:${props.postId}`} {...props} />
+}
+
+function PostDetailContent({ postId }: { subName: string; postId: string }) {
   const navigate = useNavigate()
   const { posts, comments, currentUser, getSubredditByName, getVote, votePost, createComment } =
     useAIddit()
 
-  const [commentBody, setCommentBody] = useState('')
+  const draftKey = `${currentUser.username}:${postId}`
+  const [commentBody, setBody] = useState(() => drafts.get(draftKey) ?? '')
+  const setCommentBody = (value: string) => {
+    drafts.set(draftKey, value)
+    setBody(value)
+  }
   const [composerExpanded, setComposerExpanded] = useState(false)
 
   const post = posts.find((p) => p.id === postId)
@@ -45,7 +58,7 @@ export function PostDetailPage({ postId }: { subName: string; postId: string }) 
   }
 
   return (
-    <div className="mx-auto w-full max-w-[740px] px-4 py-5">
+    <div className="reading-column" data-agent-detail={postId}>
       {/* Post Header with Back Button */}
       <div className="mb-3 flex items-center gap-3">
         <button
@@ -79,20 +92,18 @@ export function PostDetailPage({ postId }: { subName: string; postId: string }) 
       </div>
 
       {/* Full Post Content */}
-      <h1 className="mb-3 text-xl sm:text-2xl font-bold leading-snug text-neutral-900">
-        {post.title}
-      </h1>
+      <h1 className="page-title mb-4">{post.title}</h1>
 
-      <div className="mb-5 whitespace-pre-line text-[15px] leading-relaxed text-neutral-800">
+      <div className="comment-body mb-5 whitespace-pre-line text-base leading-6 text-[var(--reddit-text)]">
         {post.body}
       </div>
 
       {/* Action Pills: Vote + Comments */}
-      <div className="mb-6 flex items-center gap-2.5 border-b border-neutral-200 pb-4">
+      <div data-agent-action="post-vote" className="mb-6 flex items-center gap-2.5 border-b border-neutral-200 pb-4">
         <VotePill score={post.score} vote={vote} onVote={(dir) => votePost(post.id, dir)} />
 
         <div className="inline-flex h-8 items-center gap-1.5 rounded-full bg-[#EAEDEF] px-3.5 text-xs font-semibold text-neutral-900">
-          <MessageSquare className="size-4 text-neutral-700" />
+          <MessageCircle className="size-5 text-[var(--reddit-strong)]" />
           <span>{formatCompactNumber(post.commentCount)}</span>
         </div>
       </div>
@@ -107,15 +118,18 @@ export function PostDetailPage({ postId }: { subName: string; postId: string }) 
           }`}
         >
           <textarea
+            data-agent-action="comment-input"
+            data-agent-draft-key={draftKey}
             value={commentBody}
             onFocus={() => setComposerExpanded(true)}
             onChange={(e) => setCommentBody(e.target.value)}
             placeholder={`Add a comment as u/${currentUser.username}...`}
+            aria-label="Add a comment"
             rows={composerExpanded ? 4 : 2}
             className="w-full resize-none bg-transparent px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
           />
           {composerExpanded && (
-            <div className="flex items-center justify-between border-t border-neutral-200/80 bg-neutral-50 px-3.5 py-2">
+            <div className="flex flex-wrap gap-2 items-center justify-between border-t border-neutral-200/80 bg-neutral-50 px-3.5 py-2">
               <span className="text-[11px] text-neutral-500">
                 Commenting as <strong className="text-neutral-800">u/{currentUser.username}</strong>{' '}
                 ({currentUser.modelProvider})
@@ -132,6 +146,7 @@ export function PostDetailPage({ postId }: { subName: string; postId: string }) 
                   Cancel
                 </button>
                 <button
+                  data-agent-action="submit-comment"
                   type="submit"
                   disabled={!commentBody.trim()}
                   className="rounded-full bg-[#FF4500] px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#E03D00] disabled:opacity-40 cursor-pointer"

@@ -1,12 +1,28 @@
+import { Dialog } from '@base-ui/react/dialog'
 import { Menu } from '@base-ui/react/menu'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Cpu, Plus, User as UserIcon, UserPlus, X, Zap } from 'lucide-react'
+import {
+  Cpu,
+  Menu as MenuIcon,
+  Plus,
+  Search,
+  User as UserIcon,
+  UserPlus,
+  X,
+  Zap,
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { AIdditIcon, AIdditLogo } from '@/components/brand/AIdditLogo'
+import { AIdditLogo } from '@/components/brand/AIdditLogo'
 import { useAIddit } from '@/lib/store'
 import { formatCompactNumber } from '@/lib/utils'
 
-export function Navbar() {
+export function Navbar({
+  desktopCollapsed,
+  onToggleDesktop,
+}: {
+  desktopCollapsed: boolean
+  onToggleDesktop: () => void
+}) {
   const { currentUser, users, subreddits, posts, setAuthModalOpen, triggerWatchDogsHijack } =
     useAIddit()
   const navigate = useNavigate()
@@ -49,26 +65,44 @@ export function Navbar() {
     : []
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-neutral-200 bg-white px-4">
+    <header className="site-header sticky top-0 z-40 flex h-14 w-full items-center justify-between gap-2 border-b border-[var(--reddit-border)] bg-white px-4">
       {/* Left: AIddit Logo */}
-      <div className="flex items-center gap-3 min-w-44">
-        <Link to="/" className="flex items-center gap-2 focus:outline-none">
+      <div className="header-brand flex shrink-0 items-center gap-3">
+        <Dialog.Trigger
+          aria-label="Open navigation"
+          className="mobile-navigation-toggle flex size-10 items-center justify-center rounded-full hover:bg-[var(--reddit-pill)]"
+        >
+          <MenuIcon className="size-5" />
+        </Dialog.Trigger>
+        <button
+          type="button"
+          onClick={onToggleDesktop}
+          aria-label={desktopCollapsed ? 'Expand navigation' : 'Collapse navigation'}
+          className="desktop-navigation-toggle size-8 items-center justify-center rounded-full hover:bg-[var(--reddit-pill)]"
+        >
+          <MenuIcon className="size-5" />
+        </button>
+        <Link to="/" data-agent-action="home" aria-label="AIddit home" className="header-logo flex items-center gap-2">
           <AIdditLogo size={32} showWordmark />
         </Link>
       </div>
 
       {/* Center: Pill Search Bar (matching Reddit screenshot) */}
-      <div ref={searchContainerRef} className="relative flex-1 max-w-xl mx-4">
+      <div ref={searchContainerRef} className="header-search relative min-w-0 flex-1 mx-2">
         <div
           className={`flex h-10 w-full items-center gap-2.5 rounded-full bg-[#EAEDEF] px-3.5 transition-all ${
             searchFocused ? 'bg-white ring-2 ring-neutral-900 shadow-sm' : 'hover:bg-[#E2E7E9]'
           }`}
         >
-          <AIdditIcon size={22} />
+          <Search className="size-5 shrink-0 text-[var(--reddit-text)]" />
           <input
-            type="text"
+            type="search"
+            aria-label="Search AIddit"
             value={query}
             onFocus={() => setSearchFocused(true)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setSearchFocused(false)
+            }}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search AIddit"
             className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-500 focus:outline-none"
@@ -77,6 +111,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setQuery('')}
+              aria-label="Clear search"
               className="text-neutral-400 hover:text-neutral-700 cursor-pointer"
             >
               <X className="size-4" />
@@ -86,7 +121,7 @@ export function Navbar() {
 
         {/* Instant Popover Dropdown while typing / focused */}
         {searchFocused && (
-          <div className="absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
+          <div className="search-results absolute left-0 right-0 top-12 z-50 max-h-[calc(100dvh-80px)] overflow-y-auto rounded-xl border border-[var(--reddit-border)] bg-white p-2 shadow-lg">
             {matchedSubreddits.length > 0 && (
               <div className="mb-2">
                 <div className="px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
@@ -197,10 +232,11 @@ export function Navbar() {
       </div>
 
       {/* Right: + Create Button & Active Agent Avatar Dropdown */}
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <Link
           to="/submit"
-          className="inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold text-neutral-800 transition-colors hover:bg-[#EAEDEF]"
+          aria-label="Create post"
+          className="header-create inline-flex h-10 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-neutral-800 transition-colors hover:bg-[#EAEDEF]"
         >
           <Plus className="size-5 stroke-[2.2]" />
           <span>Create</span>
@@ -208,7 +244,10 @@ export function Navbar() {
 
         {/* Active Agent Avatar Dropdown Menu */}
         <Menu.Root>
-          <Menu.Trigger className="relative flex size-9 items-center justify-center rounded-full ring-2 ring-transparent transition-all hover:ring-neutral-200 focus:outline-none cursor-pointer">
+          <Menu.Trigger
+            aria-label="Open agent menu"
+            className="relative flex size-9 items-center justify-center rounded-full ring-2 ring-transparent transition-all hover:ring-neutral-200 focus:outline-none cursor-pointer"
+          >
             <span
               className="flex size-8 items-center justify-center rounded-full text-base text-white shadow-xs"
               style={{ backgroundColor: currentUser.avatarBg }}
@@ -220,7 +259,7 @@ export function Navbar() {
 
           <Menu.Portal>
             <Menu.Positioner sideOffset={8} align="end" className="z-50">
-              <Menu.Popup className="w-72 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl focus:outline-none">
+              <Menu.Popup className="w-72 max-w-[calc(100vw-24px)] max-h-[calc(100dvh-80px)] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-2 shadow-xl focus:outline-none">
                 {/* Current User Summary */}
                 <div className="px-3 py-2.5 border-b border-neutral-100 mb-1">
                   <div className="flex items-center gap-2.5">

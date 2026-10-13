@@ -35,14 +35,14 @@ export function SubredditPage({ subName }: { subName: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[780px] px-4 py-4">
+    <div className="reading-column">
       {/* Top Subreddit Header Banner (contains all community metadata, no right sidebar) */}
-      <div className="mb-4 overflow-hidden rounded-3xl border border-neutral-200 bg-white">
+      <div className="community-header mb-4 overflow-hidden rounded-xl bg-white">
         <div className={`h-24 w-full bg-gradient-to-r ${subreddit.bannerGradient}`} />
 
-        <div className="px-6 pb-5">
+        <div className="px-2 sm:px-4 pb-4">
           <div className="-mt-8 flex flex-wrap items-end justify-between gap-4">
-            <div className="flex items-end gap-3.5">
+            <div className="flex min-w-0 items-end gap-3.5">
               <div
                 className="flex size-16 items-center justify-center rounded-full border-4 border-white text-xl font-extrabold text-white shadow-md shrink-0"
                 style={{ backgroundColor: subreddit.iconBg }}
@@ -50,9 +50,7 @@ export function SubredditPage({ subName }: { subName: string }) {
                 {subreddit.iconText}
               </div>
               <div className="pb-0.5">
-                <h1 className="text-2xl font-extrabold tracking-tight text-neutral-900">
-                  r/{subreddit.name}
-                </h1>
+                <h1 className="page-title">r/{subreddit.name}</h1>
                 <p className="text-xs font-medium text-neutral-500">{subreddit.title}</p>
               </div>
             </div>
@@ -61,7 +59,7 @@ export function SubredditPage({ subName }: { subName: string }) {
               <Link
                 to="/submit"
                 search={{ subreddit: subreddit.name }}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-4 text-xs font-bold text-neutral-800 transition-colors hover:bg-[#F6F8F9]"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--reddit-border)] bg-white px-4 text-xs font-bold text-neutral-800 transition-colors hover:bg-[#F6F8F9]"
               >
                 <Plus className="size-4" />
                 <span>Create Post</span>
@@ -72,7 +70,7 @@ export function SubredditPage({ subName }: { subName: string }) {
                 onClick={() => toggleJoinSubreddit(subreddit.name)}
                 className={`h-9 rounded-full px-5 text-xs font-bold transition-colors cursor-pointer ${
                   joined
-                    ? 'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-100'
+                    ? 'border border-[var(--reddit-border)] bg-white text-neutral-800 hover:bg-neutral-100'
                     : 'bg-neutral-950 text-white hover:bg-neutral-800'
                 }`}
               >
@@ -97,7 +95,7 @@ export function SubredditPage({ subName }: { subName: string }) {
       </div>
 
       {/* Sort Select & Posts */}
-      <div className="border-b border-neutral-200 pb-1 mb-1">
+      <div className="border-b border-[var(--reddit-border)] pb-2 mb-1">
         <SortSelect value={sortBy} onChange={setSortBy} />
       </div>
 
@@ -106,7 +104,7 @@ export function SubredditPage({ subName }: { subName: string }) {
           No posts in r/{subreddit.name} yet. Click "Create Post" above to start the discussion!
         </div>
       ) : (
-        <div className="divide-y divide-neutral-200">
+        <div className="divide-y divide-[var(--reddit-border)]">
           {subPosts.map((post) => (
             <PostItem key={post.id} post={post} hideJoinButton />
           ))}

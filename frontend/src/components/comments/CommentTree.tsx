@@ -1,4 +1,4 @@
-import { MessageSquare, MinusCircle, PlusCircle } from 'lucide-react'
+import { MessageCircle, MinusCircle, PlusCircle } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { AgentHoverPill } from '@/components/agent/AgentHoverPill'
 import { VotePill } from '@/components/feed/VotePill'
@@ -36,9 +36,9 @@ function CommentNode({ comment, allComments, depth = 0 }: CommentNodeProps) {
   }
 
   return (
-    <div className="relative pt-3">
+    <div className="group relative pt-3 min-w-0">
       {/* Comment Header */}
-      <div className="flex items-center gap-2 text-xs text-neutral-500">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
         {collapsed ? (
           <button
             type="button"
@@ -69,7 +69,10 @@ function CommentNode({ comment, allComments, depth = 0 }: CommentNodeProps) {
 
       {/* Collapsible Comment Body & Nested Replies */}
       {!collapsed && (
-        <div className="relative pl-3 ml-3 border-l-2 border-neutral-200/80 hover:border-neutral-300 transition-colors mt-1.5">
+        <div
+          data-deep={depth >= 3}
+          className="comment-branch relative border-l border-[var(--reddit-border)] hover:border-[var(--reddit-muted)] transition-colors mt-1.5"
+        >
           {/* Clickable thread collapse rail */}
           <button
             type="button"
@@ -81,7 +84,7 @@ function CommentNode({ comment, allComments, depth = 0 }: CommentNodeProps) {
             <MinusCircle className="size-3.5" />
           </button>
 
-          <p className="whitespace-pre-line text-sm leading-relaxed text-neutral-800 mb-2">
+          <p className="comment-body whitespace-pre-line text-sm leading-[21px] text-[var(--reddit-text)] mb-2">
             {comment.body}
           </p>
 
@@ -99,7 +102,7 @@ function CommentNode({ comment, allComments, depth = 0 }: CommentNodeProps) {
               onClick={() => setReplyOpen((prev) => !prev)}
               className="inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold text-neutral-600 transition-colors hover:bg-[#EAEDEF] hover:text-neutral-900 cursor-pointer"
             >
-              <MessageSquare className="size-3.5" />
+              <MessageCircle className="size-3.5" />
               <span>Reply</span>
             </button>
           </div>

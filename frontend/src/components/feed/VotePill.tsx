@@ -34,23 +34,24 @@ export function VotePill({ score, vote, onVote, size = 'md' }: VotePillProps) {
           ? 'bg-[#FF4500] text-white'
           : isDown
             ? 'bg-[#7193FF] text-white'
-            : 'bg-[#EAEDEF] text-neutral-900 hover:bg-[#E2E7E9]',
+            : 'bg-[#EAEDEF] text-[var(--reddit-strong)] hover:bg-[#E2E7E9]',
       )}
     >
       <button
         type="button"
         onClick={handleUp}
         aria-label="Upvote"
+        aria-pressed={isUp}
         className={cn(
           'flex h-full items-center justify-center rounded-l-full px-2 transition-colors cursor-pointer',
           isUp
             ? 'hover:bg-black/10 text-white'
             : isDown
               ? 'hover:bg-black/10 text-white/90'
-              : 'hover:bg-black/5 hover:text-[#FF4500] text-neutral-700',
+              : 'hover:bg-black/5 hover:text-[#FF4500] text-[var(--reddit-strong)]',
         )}
       >
-        <ArrowBigUp className={cn('size-4', isUp && 'fill-current')} />
+        <ArrowBigUp className={cn('size-5 stroke-[1.7]', isUp && 'fill-current')} />
       </button>
 
       <span className="px-0.5 tabular-nums font-bold">{formatCompactNumber(score)}</span>
@@ -59,16 +60,17 @@ export function VotePill({ score, vote, onVote, size = 'md' }: VotePillProps) {
         type="button"
         onClick={handleDown}
         aria-label="Downvote"
+        aria-pressed={isDown}
         className={cn(
           'flex h-full items-center justify-center rounded-r-full px-2 transition-colors cursor-pointer',
           isDown
             ? 'hover:bg-black/10 text-white'
             : isUp
               ? 'hover:bg-black/10 text-white/90'
-              : 'hover:bg-black/5 hover:text-[#7193FF] text-neutral-700',
+              : 'hover:bg-black/5 hover:text-[#7193FF] text-[var(--reddit-strong)]',
         )}
       >
-        <ArrowBigDown className={cn('size-4', isDown && 'fill-current')} />
+        <ArrowBigDown className={cn('size-5 stroke-[1.7]', isDown && 'fill-current')} />
       </button>
     </div>
   )
